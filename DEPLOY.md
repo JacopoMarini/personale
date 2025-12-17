@@ -32,8 +32,18 @@ Per pubblicare il sito web su GitHub Pages:
 
 Il sito sarà disponibile su: `https://TUO_USERNAME.github.io/personale/`
 
+## Dominio personalizzato (es. jacopomarini.it)
+
+Se vuoi pubblicare il sito sul tuo dominio:
+
+1. GitHub → **Settings → Pages**
+2. In **Custom domain** inserisci `jacopomarini.it` (o `www.jacopomarini.it`)
+3. Attendi la verifica DNS, poi abilita **Enforce HTTPS**
+4. Configura i record DNS dal provider del dominio (vedi guida GitHub)
+
 ## Note
 
-- Se cambi il nome del repository, aggiorna anche il `base` in `vite.config.ts`
+- Se deployi su `https://<user>.github.io/<repo>/`, imposta `base: '/<repo>/'` in `vite.config.ts`
+- Se deployi su un **dominio custom**, imposta `base: '/'`
 - Il workflow GitHub Actions pubblicherà automaticamente il sito ad ogni push sul branch main/master
 
