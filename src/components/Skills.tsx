@@ -1,5 +1,5 @@
-import './Section.css'
-import './Skills.css'
+import { Box, Chip, Divider, Stack, Typography } from '@mui/material'
+import { Section } from './Section'
 
 const Skills = ({ id }: { id: string }) => {
   const technologies = [
@@ -20,28 +20,45 @@ const Skills = ({ id }: { id: string }) => {
   const categories = Array.from(new Set(technologies.map(t => t.category)))
 
   return (
-    <section id={id} className="section skills-section">
-      <div className="section-header">
-        <h2>Competenze Tecnologiche</h2>
-        <div className="section-divider"></div>
-      </div>
-      <div className="skills-content">
-        {categories.map(category => (
-          <div key={category} className="skill-category">
-            <h3 className="category-title">{category}</h3>
-            <div className="skills-grid">
+    <Section id={id} title="Competenze Tecnologiche">
+      <Stack spacing={3}>
+        {categories.map((category, idx) => (
+          <Box key={category} data-animate>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              spacing={1.5}
+              alignItems={{ xs: 'flex-start', md: 'center' }}
+              sx={{ mb: 1.5 }}
+            >
+              <Typography variant="h6">{category}</Typography>
+              <Divider flexItem sx={{ display: { xs: 'none', md: 'block' } }} />
+            </Stack>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {technologies
-                .filter(tech => tech.category === category)
-                .map(tech => (
-                  <div key={tech.name} className="skill-card">
-                    <span className="skill-name">{tech.name}</span>
-                  </div>
+                .filter((tech) => tech.category === category)
+                .map((tech) => (
+                  <Chip
+                    key={tech.name}
+                    label={tech.name}
+                    variant="outlined"
+                    sx={{
+                      borderRadius: 999,
+                      transition: 'transform 150ms ease, box-shadow 150ms ease',
+                      '&:hover': {
+                        transform: 'translateY(-1px)',
+                        boxShadow: 1,
+                      },
+                    }}
+                  />
                 ))}
-            </div>
-          </div>
+            </Box>
+            {idx < categories.length - 1 ? (
+              <Divider sx={{ mt: 3, opacity: 0.8 }} />
+            ) : null}
+          </Box>
         ))}
-      </div>
-    </section>
+      </Stack>
+    </Section>
   )
 }
 

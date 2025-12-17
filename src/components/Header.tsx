@@ -1,5 +1,7 @@
-import { useEffect } from 'react'
-import './Header.css'
+import { useEffect, useLayoutEffect, useRef } from 'react'
+import { AppBar, Box, Button, Container, Stack, Toolbar, Typography } from '@mui/material'
+import { gsap } from '../animations/gsap'
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 
 interface HeaderProps {
   activeSection: string
@@ -7,6 +9,9 @@ interface HeaderProps {
 }
 
 const Header = ({ activeSection, setActiveSection }: HeaderProps) => {
+  const reducedMotion = usePrefersReducedMotion()
+  const headerRef = useRef<HTMLDivElement | null>(null)
+
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['about', 'experience', 'skills', 'contact']
@@ -31,6 +36,20 @@ const Header = ({ activeSection, setActiveSection }: HeaderProps) => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [setActiveSection])
 
+  useLayoutEffect(() => {
+    if (reducedMotion) return
+    const el = headerRef.current
+    if (!el) return
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el,
+        { autoAlpha: 0, y: -12 },
+        { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power2.out' },
+      )
+    }, el)
+    return () => ctx.revert()
+  }, [reducedMotion])
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
@@ -39,41 +58,60 @@ const Header = ({ activeSection, setActiveSection }: HeaderProps) => {
     }
   }
 
+  const navItems: Array<{ id: string; label: string }> = [
+    { id: 'about', label: 'Chi Sono' },
+    { id: 'experience', label: 'Esperienza' },
+    { id: 'skills', label: 'Competenze' },
+    { id: 'contact', label: 'Contatti' },
+  ]
+
   return (
-    <header className="header">
-      <div className="header-container">
-        <div className="logo">
-          <h1>Jacopo Marini</h1>
-          <span className="subtitle">Web Developer</span>
-        </div>
-        <nav className="nav">
-          <button
-            className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}
-            onClick={() => scrollToSection('about')}
-          >
-            Chi Sono
-          </button>
-          <button
-            className={`nav-link ${activeSection === 'experience' ? 'active' : ''}`}
-            onClick={() => scrollToSection('experience')}
-          >
-            Esperienza
-          </button>
-          <button
-            className={`nav-link ${activeSection === 'skills' ? 'active' : ''}`}
-            onClick={() => scrollToSection('skills')}
-          >
-            Competenze
-          </button>
-          <button
-            className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`}
-            onClick={() => scrollToSection('contact')}
-          >
-            Contatti
-          </button>
-        </nav>
-      </div>
-    </header>
+    <AppBar position="sticky">
+      <Container maxWidth="lg">
+        <Toolbar
+          disableGutters
+          sx={{ py: 1.5, minHeight: { xs: 64, md: 72 } }}
+        >
+          <Box ref={headerRef} sx={{ width: '100%' }}>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              spacing={{ xs: 1.5, md: 2 }}
+              alignItems={{ xs: 'flex-start', md: 'center' }}
+              justifyContent="space-between"
+            >
+              <Box>
+                <Typography variant="h4" sx={{ fontWeight: 900, lineHeight: 1.1 }}>
+                  Jacopo Marini
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Web Developer
+                </Typography>
+              </Box>
+
+              <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap' }}>
+                {navItems.map((item) => (
+                  <Button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id)}
+                    size="small"
+                    variant={activeSection === item.id ? 'contained' : 'text'}
+                    color={activeSection === item.id ? 'primary' : 'inherit'}
+                    sx={{
+                      borderRadius: 999,
+                      px: 1.5,
+                      transition: 'transform 150ms ease, background-color 150ms ease',
+                      '&:hover': { transform: 'translateY(-1px)' },
+                    }}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+              </Stack>
+            </Stack>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   )
 }
 
