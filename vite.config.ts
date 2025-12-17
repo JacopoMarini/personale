@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // Se deployi su un dominio custom (es. https://jacopomarini.it), il base deve essere '/'
-  // Se invece deployi su https://<user>.github.io/<repo>/, imposta base: '/<repo>/'
-  base: '/',
+  // Base path "relativo" per funzionare sia su dominio custom (root) sia su GitHub Pages in sottocartella.
+  // Questo evita problemi di asset quando cambia il path di pubblicazione.
+  base: './',
 })
 
